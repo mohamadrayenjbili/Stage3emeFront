@@ -10,5 +10,6 @@
     <button type="submit">Login</button>
     <div *ngIf="error" style="color:red">{{ error }}</div>
   </form>
-  <p>Pas de compte ? <a routerLink="/signup">Créer un compte</a ></p>
+  <!--<p>Pas de compte ? <a routerLink="/signup">Créer un compte</a ></p>-->
+    <p>Pas de compte ? <button type="button" (click)="goToSignup()">Créer un compte</button></p>
 </div>

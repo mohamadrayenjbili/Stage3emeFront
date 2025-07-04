@@ -25,4 +25,7 @@ export class Login {
       error: err => this.error = 'Identifiants invalides'
     });
   }
+  goToSignup() {
+  this.router.navigate(['/signup']);
+}
 }

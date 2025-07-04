@@ -28,4 +28,7 @@ export class Signup {
       error: err => this.error = 'Erreur lors de la création du compte'
     });
   }
+    goToSignin() {
+  this.router.navigate(['/signin']);
+}
 }

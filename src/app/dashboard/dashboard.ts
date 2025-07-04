@@ -1,11 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { TimeEntryService, TotalSummary } from '../services/time-entry.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css'
+  styleUrl: './dashboard.css',
+  standalone: true,
+  imports: [CommonModule]
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
+  totalSummary?: TotalSummary;
+  error = '';
 
+  constructor(private timeEntryService: TimeEntryService) {}
+
+  ngOnInit() {
+    this.timeEntryService.getTotal().subscribe({
+      next: (data) => this.totalSummary = data,
+      error: (err) => this.error = 'Erreur lors du chargement des pointages.'
+    });
+  }
 }
