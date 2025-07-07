@@ -1,0 +1,30 @@
+    .dashboard-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    form label {
+      display: block;
+      margin-top: 10px;
+    }
+    form input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    form button {
+      margin-top: 10px;
+      padding: 8px 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }

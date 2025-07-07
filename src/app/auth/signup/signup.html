@@ -1,21 +1,48 @@
-<div class="signup-container">
-  <h2>Créer un compte</h2>
-  <form (ngSubmit)="onSubmit()">
-    <label for="username">Nom d'utilisateur :</label>
-    <input id="username" type="text" name="username" [(ngModel)]="username" required>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inscription</title>
+  <link rel="stylesheet" href="signup.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+</head>
+<body>
+  <div class="form-fullpage">
+    <div class="tabs">
+      <button class="inactive" (click)="goToSignin()">Se connecter</button>
+      <button class="active">S'inscrire</button>
+    </div>
 
-    <label for="email">Email :</label>
-    <input id="email" type="email" name="email" [(ngModel)]="email" required>
+    <form (ngSubmit)="onSubmit()" class="form" #signupForm="ngForm">
+      <label for="username">Nom d'utilisateur</label>
+      <input type="text" id="username" name="username" required [(ngModel)]="username" />
 
-    <label for="password">Mot de passe :</label>
-    <input id="password" type="password" name="password" [(ngModel)]="password" required>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required [(ngModel)]="email" />
 
-    <label for="phone">Téléphone :</label>
-    <input id="phone" type="text" name="phone" [(ngModel)]="phone">
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" name="password" required [(ngModel)]="password" />
 
-    <button type="submit">Créer un compte</button>
-    <div *ngIf="error" style="color:red">{{ error }}</div>
-  </form>
-  <p>Déja un compte ? <button type="button" (click)="goToSignin()">Se connecter</button></p>
+      <label for="phone">Téléphone</label>
+      <input type="text" id="phone" name="phone" [(ngModel)]="phone" />
 
-</div>
+      <button type="submit" class="btn">
+        <i class="fa fa-user-plus"></i> Créer un compte
+      </button>
+
+      <div *ngIf="error" class="error-msg">{{ error }}</div>
+
+      <p class="or">Ou inscrivez-vous avec</p>
+      <div class="socials">
+        <button class="social">G</button>
+        <button class="social">f</button>
+        <button class="social">t</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

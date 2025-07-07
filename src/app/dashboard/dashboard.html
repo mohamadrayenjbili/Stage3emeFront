@@ -1,150 +1,78 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title>Dashboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .dashboard-container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    form label {
-      display: block;
-      margin-top: 10px;
-    }
-    form input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-    }
-    form button {
-      margin-top: 10px;
-      padding: 8px 16px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
-    .error {
-      color: red;
-      margin-top: 10px;
-    }
-  </style>
-</head>
-<body>
-  <div class="dashboard-container">
-    <h2>Bienvenue sur le Dashboard</h2>
+<div class="dashboard-container">
+  <h2>Bienvenue sur le Dashboard</h2>
 
-    <form id="entryForm" onsubmit="onSubmit(event)">
-      <label for="day">Jour :</label>
-      <input id="day" type="date" name="day" required />
+  <!-- Formulaire d'ajout de pointage -->
+  <form (ngSubmit)="onSubmit()" #entryForm="ngForm">
+    <label for="day">Jour :</label>
+    <input
+      id="day"
+      type="date"
+      name="day"
+      required
+      [(ngModel)]="day"
+    />
 
-      <label for="startTime">Heure de début :</label>
-      <input id="startTime" type="time" name="startTime" required />
+    <label for="startTime">Heure de début :</label>
+    <input
+      id="startTime"
+      type="time"
+      name="startTime"
+      required
+      [(ngModel)]="startTime"
+    />
 
-      <label for="endTime">Heure de fin :</label>
-      <input id="endTime" type="time" name="endTime" required />
+    <label for="endTime">Heure de fin :</label>
+    <input
+      id="endTime"
+      type="time"
+      name="endTime"
+      required
+      [(ngModel)]="endTime"
+    />
 
-      <button type="submit">Ajouter</button>
-      <div id="error" class="error"></div>
-    </form>
+    <button type="submit">Ajouter</button>
+    <div class="error" *ngIf="error">{{ error }}</div>
+  </form>
 
-    <h3>Heures totales : <span id="totalHours">0</span> h</h3>
+  <!-- Filtre par date -->
+  <div style="margin-top: 1rem;">
+    <label for="filterDate">Filtrer par date :</label>
+    <input
+      id="filterDate"
+      type="date"
+      [(ngModel)]="filterDate"
+      (change)="applyDateFilter()"
+      name="filterDate"
+    />
+    <button (click)="resetFilter()">Réinitialiser</button>
+  </div>
 
-    <h4>Liste des pointages :</h4>
+  <h3>Heures totales : <span>{{ totalSummary?.totalHours ?? 0 }}</span> h</h3>
+
+  <h4>Liste des pointages :</h4>
+
+  <ng-container *ngIf="filteredEntries?.length; else noData">
     <table>
       <thead>
         <tr>
           <th>Date</th>
+          <th>Début</th>
+          <th>Fin</th>
           <th>Heures travaillées</th>
-          <th>Description</th>
         </tr>
       </thead>
-      <tbody id="entryList"></tbody>
+      <tbody>
+        <tr *ngFor="let entry of filteredEntries">
+          <td>{{ entry.day | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ entry.startTime }}</td>
+          <td>{{ entry.endTime }}</td>
+          <td>{{ formatHours(entry.hoursWorked) }}</td>
+        </tr>
+      </tbody>
     </table>
-  </div>
+  </ng-container>
 
-  <script>
-    async function onSubmit(event) {
-      event.preventDefault(); // TRÈS IMPORTANT, empêche la soumission classique et changement URL
-
-      const errorEl = document.getElementById('error');
-      errorEl.textContent = '';
-
-      const day = document.getElementById('day').value;
-      const startTime = document.getElementById('startTime').value;
-      const endTime = document.getElementById('endTime').value;
-
-      if (startTime >= endTime) {
-        errorEl.textContent = "L'heure de fin doit être après l'heure de début.";
-        return;
-      }
-
-      const data = { day, startTime, endTime };
-
-      try {
-        const response = await fetch('http://localhost:8080/api/time-entry', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',  // si tu utilises session/cookies
-          body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-          const text = await response.text();
-          throw new Error(text || 'Erreur lors de l\'ajout');
-        }
-
-        document.getElementById('entryForm').reset();
-        await loadEntries();
-      } catch (err) {
-        errorEl.textContent = err.message;
-      }
-    }
-
-    async function loadEntries() {
-      const totalHoursEl = document.getElementById('totalHours');
-      const entryListEl = document.getElementById('entryList');
-      const errorEl = document.getElementById('error');
-      errorEl.textContent = '';
-
-      try {
-        const res = await fetch('http://localhost:8080/api/time-entry/total', {
-          credentials: 'include'
-        });
-
-        if (!res.ok) throw new Error('Erreur lors du chargement des données');
-
-        const data = await res.json();
-
-        totalHoursEl.textContent = data.totalHours.toFixed(2);
-        entryListEl.innerHTML = '';
-
-        data.entries.forEach(entry => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${entry.date}</td>
-            <td>${entry.hoursWorked.toFixed(2)} h</td>
-            <td>De ${entry.startTime} à ${entry.endTime}</td>
-          `;
-          entryListEl.appendChild(tr);
-        });
-      } catch (err) {
-        errorEl.textContent = err.message;
-      }
-    }
-
-    // Charger les données au chargement de la page
-    window.addEventListener('load', loadEntries);
-  </script>
-</body>
-</html>
+  <ng-template #noData>
+    <p>Aucun pointage pour le moment.</p>
+  </ng-template>
+</div>

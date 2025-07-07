@@ -5,9 +5,17 @@ import { Observable } from 'rxjs';
 export interface TimeEntry {
   id?: string;
   userId?: string;
-  date: string;
+  day: string;
+  startTime: string;
+  endTime: string;
   hoursWorked: number;
   description?: string;
+}
+
+export interface TimeEntryInput {
+  day: string;
+  startTime: string;
+  endTime: string;
 }
 
 export interface DaySummary {
@@ -50,7 +58,7 @@ export class TimeEntryService {
     return this.http.get<TotalSummary>(`${this.apiUrl}/total`, { withCredentials: true });
   }
 
-  addTimeEntry(entry: TimeEntry): Observable<TimeEntry> {
-    return this.http.post<TimeEntry>(this.apiUrl, entry, { withCredentials: true });
+  addTimeEntry(entry: TimeEntryInput): Observable<any> {
+    return this.http.post(this.apiUrl, entry, { withCredentials: true });
   }
-} 
+}
