@@ -1,48 +1,60 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inscription</title>
-  <link rel="stylesheet" href="signup.css" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
-</head>
-<body>
-  <div class="form-fullpage">
-    <div class="tabs">
-      <button class="inactive" (click)="goToSignin()">Se connecter</button>
-      <button class="active">S'inscrire</button>
-    </div>
+<div class="form-fullpage">
+  <div class="tabs">
+    <button class="inactive" (click)="goToSignin()">Se connecter</button>
+    <button class="active">S'inscrire</button>
+  </div>
 
-    <form (ngSubmit)="onSubmit()" class="form" #signupForm="ngForm">
+  <form (ngSubmit)="onSubmit()" class="form" #signupForm="ngForm">
+
+    <label for="type">Type de compte</label>
+    <select id="type" name="type" required [(ngModel)]="type">
+      <option value="" disabled selected>Choisissez un type</option>
+      <option value="user">Utilisateur</option>
+      <option value="client">Client</option>
+    </select>
+
+    <!-- USER FIELDS -->
+    <ng-container *ngIf="type === 'user'">
       <label for="username">Nom d'utilisateur</label>
-      <input type="text" id="username" name="username" required [(ngModel)]="username" />
-
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" required [(ngModel)]="email" />
-
-      <label for="password">Mot de passe</label>
-      <input type="password" id="password" name="password" required [(ngModel)]="password" />
+      <input type="text" id="username" name="username" [(ngModel)]="username" required />
 
       <label for="phone">Téléphone</label>
       <input type="text" id="phone" name="phone" [(ngModel)]="phone" />
+    </ng-container>
 
-      <button type="submit" class="btn">
-        <i class="fa fa-user-plus"></i> Créer un compte
-      </button>
+    <!-- CLIENT FIELDS -->
+    <ng-container *ngIf="type === 'client'">
+      <label for="nom">Nom</label>
+      <input type="text" id="nom" name="nom" [(ngModel)]="nom" required />
 
-      <div *ngIf="error" class="error-msg">{{ error }}</div>
+      <label for="adresse">Adresse</label>
+      <input type="text" id="adresse" name="adresse" [(ngModel)]="adresse" />
 
-      <p class="or">Ou inscrivez-vous avec</p>
-      <div class="socials">
-        <button class="social">G</button>
-        <button class="social">f</button>
-        <button class="social">t</button>
-      </div>
-    </form>
-  </div>
-</body>
-</html>
+      <label for="nomSociete">Nom de la société</label>
+      <input type="text" id="nomSociete" name="nomSociete" [(ngModel)]="nomSociete" />
+
+      <label for="numTel">Téléphone</label>
+      <input type="text" id="numTel" name="numTel" [(ngModel)]="numTel" />
+    </ng-container>
+
+    <!-- COMMON FIELDS -->
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" [(ngModel)]="email" required />
+
+    <label for="password">Mot de passe</label>
+    <input type="password" id="password" name="password" [(ngModel)]="password" required />
+
+    <button type="submit" class="btn">
+      <i class="fa fa-user-plus"></i> Créer un compte
+    </button>
+
+    <div *ngIf="error" class="error-msg">{{ error }}</div>
+
+    <p class="or">Ou inscrivez-vous avec</p>
+    <div class="socials">
+      <button type="button" class="social">G</button>
+      <button type="button" class="social">f</button>
+      <button type="button" class="social">t</button>
+    </div>
+  </form>
+</div>

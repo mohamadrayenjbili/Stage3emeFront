@@ -10,13 +10,17 @@ export interface TimeEntry {
   endTime: string;
   hoursWorked: number;
   description?: string;
+    clientId: string; 
+
 }
 
 export interface TimeEntryInput {
   day: string;
   startTime: string;
   endTime: string;
+  clientId: string; // ajouté
 }
+
 
 export interface DaySummary {
   day: string;

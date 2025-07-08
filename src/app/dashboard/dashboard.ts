@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TimeEntryService, TotalSummary, TimeEntryInput, TimeEntry } from '../services/time-entry.service';
+import { ClientService, Client } from '../services/client.service';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,10 +23,30 @@ export class Dashboard implements OnInit {
   endTime = '';
   filterDate = '';
 
-  constructor(private timeEntryService: TimeEntryService) {}
+  clients: Client[] = [];
+  selectedClientId = '';
+
+  constructor(
+    private timeEntryService: TimeEntryService,
+    private clientService: ClientService,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.loadTotalSummary();
+    this.loadClients();
+  }
+
+  loadClients() {
+    this.clientService.getClients().subscribe({
+      next: (data) => {
+        this.clients = data;
+      },
+      error: () => {
+        this.error = "Erreur lors du chargement des clients.";
+      }
+    });
   }
 
   loadTotalSummary() {
@@ -46,10 +69,16 @@ export class Dashboard implements OnInit {
       return;
     }
 
+    if (!this.selectedClientId) {
+      this.error = "Veuillez sélectionner un client.";
+      return;
+    }
+
     const entry: TimeEntryInput = {
       day: this.day,
       startTime: this.startTime,
       endTime: this.endTime,
+      clientId: this.selectedClientId
     };
 
     this.timeEntryService.addTimeEntry(entry).subscribe({
@@ -57,6 +86,7 @@ export class Dashboard implements OnInit {
         this.day = '';
         this.startTime = '';
         this.endTime = '';
+        this.selectedClientId = '';
         this.loadTotalSummary();
       },
       error: (err) => {
@@ -85,4 +115,25 @@ export class Dashboard implements OnInit {
       this.filteredEntries = this.totalSummary.entries;
     }
   }
+
+  getClientName(clientId: string): string {
+    const client = this.clients.find(c => c.id === clientId);
+    return client ? client.nom : 'Client inconnu';
+  }
+
+logout() {
+  // Appeler la route logout du backend via un service ou fetch direct
+  fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+    .then(response => {
+      if (response.ok) {
+        // Rediriger vers la page login
+        this.router.navigate(['/login']);
+      } else {
+        this.error = 'Erreur lors de la déconnexion.';
+      }
+    })
+    .catch(() => {
+      this.error = 'Erreur lors de la déconnexion.';
+    });
+}
 }

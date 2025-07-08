@@ -64,7 +64,8 @@ label {
   color: #444;
 }
 
-input {
+input,
+select {
   padding: 14px;
   border-radius: 10px;
   border: none;
@@ -72,6 +73,26 @@ input {
   box-shadow: inset 4px 4px 6px #cbd5e1, inset -4px -4px 6px #666;
   font-size: 1rem;
   margin-bottom: 10px;
+
+  /* Suppression apparence native */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Largeur full */
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Flèche personnalisée pour select */
+select {
+  background-image:
+    url("data:image/svg+xml;charset=US-ASCII,%3csvg%20width%3d%2210%22%20height%3d%227%22%20viewBox%3d%220%200%2010%207%22%20xmlns%3d%22http%3a//www.w3.org/2000/svg%22%3e%3cpath%20d%3d%22M0%200l5%207%205-7z%22%20fill%3d%22%23666%22/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 10px 7px;
+  padding-right: 40px; /* Espace pour la flèche */
 }
 
 /* Bouton principal */
@@ -90,6 +111,7 @@ input {
 
 .btn:hover {
   background: #666;
+  color: white;
 }
 
 /* Texte secondaire */

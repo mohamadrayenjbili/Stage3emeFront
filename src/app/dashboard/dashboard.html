@@ -1,78 +1,74 @@
-<div class="dashboard-container">
-  <h2>Bienvenue sur le Dashboard</h2>
+<div class="form-fullpage">
+  <div class="form">
 
-  <!-- Formulaire d'ajout de pointage -->
-  <form (ngSubmit)="onSubmit()" #entryForm="ngForm">
-    <label for="day">Jour :</label>
-    <input
-      id="day"
-      type="date"
-      name="day"
-      required
-      [(ngModel)]="day"
-    />
+    <h2 class="title">Bienvenue sur le Dashboard</h2>
 
-    <label for="startTime">Heure de début :</label>
-    <input
-      id="startTime"
-      type="time"
-      name="startTime"
-      required
-      [(ngModel)]="startTime"
-    />
+    <form (ngSubmit)="onSubmit()" #entryForm="ngForm" class="entry-form">
+      <label for="day">Jour :</label>
+      <input id="day" type="date" name="day" required [(ngModel)]="day" />
 
-    <label for="endTime">Heure de fin :</label>
-    <input
-      id="endTime"
-      type="time"
-      name="endTime"
-      required
-      [(ngModel)]="endTime"
-    />
+      <label for="startTime">Heure de début :</label>
+      <input id="startTime" type="time" name="startTime" required [(ngModel)]="startTime" />
 
-    <button type="submit">Ajouter</button>
-    <div class="error" *ngIf="error">{{ error }}</div>
-  </form>
+      <label for="endTime">Heure de fin :</label>
+      <input id="endTime" type="time" name="endTime" required [(ngModel)]="endTime" />
 
-  <!-- Filtre par date -->
-  <div style="margin-top: 1rem;">
-    <label for="filterDate">Filtrer par date :</label>
-    <input
-      id="filterDate"
-      type="date"
-      [(ngModel)]="filterDate"
-      (change)="applyDateFilter()"
-      name="filterDate"
-    />
-    <button (click)="resetFilter()">Réinitialiser</button>
+      <label for="client">Client :</label>
+      <select id="client" name="client" required [(ngModel)]="selectedClientId">
+        <option value="" disabled selected>-- Sélectionnez un client --</option>
+        <option *ngFor="let client of clients" [value]="client.id">{{ client.nom }}</option>
+      </select>
+
+      <button type="submit" class="btn btn-submit">Ajouter</button>
+      <div class="error-msg" *ngIf="error">{{ error }}</div>
+    </form>
+
+    <button class="btn logout">Déconnexion</button>
+
+    <div class="filter-section">
+      <label for="filterDate">Filtrer par date :</label>
+      <input
+        id="filterDate"
+        type="date"
+        [(ngModel)]="filterDate"
+        (change)="applyDateFilter()"
+        name="filterDate"
+      />
+      <button class="btn btn-reset" (click)="resetFilter()">Réinitialiser</button>
+    </div>
+
+    <h3 class="total-hours">
+      Heures totales : <span>{{ formatHours(totalSummary?.totalHours ?? 0) }}</span>
+    </h3>
+
+    <h4 class="pointages-title">Liste des pointages :</h4>
+
+    <ng-container *ngIf="filteredEntries?.length; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Heures travaillées</th>
+            <th>Client</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of filteredEntries">
+            <td>{{ entry.day | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ entry.startTime }}</td>
+            <td>{{ entry.endTime }}</td>
+            <td>{{ formatHours(entry.hoursWorked) }}</td>
+            <td>{{ getClientName(entry.clientId) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+
+    <ng-template #noData>
+      <p class="no-data-msg">Aucun pointage pour le moment.</p>
+    </ng-template>
+
   </div>
-
-  <h3>Heures totales : <span>{{ totalSummary?.totalHours ?? 0 }}</span> h</h3>
-
-  <h4>Liste des pointages :</h4>
-
-  <ng-container *ngIf="filteredEntries?.length; else noData">
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Début</th>
-          <th>Fin</th>
-          <th>Heures travaillées</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let entry of filteredEntries">
-          <td>{{ entry.day | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ entry.startTime }}</td>
-          <td>{{ entry.endTime }}</td>
-          <td>{{ formatHours(entry.hoursWorked) }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </ng-container>
-
-  <ng-template #noData>
-    <p>Aucun pointage pour le moment.</p>
-  </ng-template>
 </div>
